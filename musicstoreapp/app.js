@@ -14,7 +14,13 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 require("./routes/songs")(app);
 
+let swig = require("swig");
+require("./routes/songs")(app,swig);
+
 // view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'twig');
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'twig');
 

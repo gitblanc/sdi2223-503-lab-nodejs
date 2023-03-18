@@ -37,3 +37,27 @@ module.exports = function (app) {
     });
 };
 
+module.exports = function(app, twig){
+    app.get("/songs", function (rq, res){
+        let songs = [{
+            "title": "Blank space",
+            "price": "1.2"
+        }, {
+            "title": "See you again",
+            "price": "1.3"
+        }, {
+            "title": "Uptown Funk",
+            "price": "1.1"
+        }];
+
+        let response = {
+            seller: "Tienda de canciones",
+            songs: songs
+        };
+        res.render("shop.twig", response);
+    });
+
+    app.get("/songs/add", function (rq, res){
+        res.render("add.twig");
+    });
+}

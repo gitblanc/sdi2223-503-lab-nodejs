@@ -3,5 +3,6 @@
   "description": "Tienda de música",
   "version": "1.0.0",
   "dependencies": {
+    "swig": "^1.4.2"
   }
 }
