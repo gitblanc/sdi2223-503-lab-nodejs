@@ -5,6 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var app = express();
+let fileUpload = require('express-fileupload');
+app.use(fileUpload({
+    limits: {fileSize: 50 * 1024 * 1024},
+    createParentPath: true
+}));
+app.set('uploadPath', __dirname)
 
 let bodyParser = require("body-parser");
 app.use(bodyParser.json());
@@ -12,7 +18,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const { MongoClient } = require("mongodb");
+const {MongoClient} = require("mongodb");
 const url = 'mongodb+srv://admin:sdi@eii-sdi-cluster.5o2t719.mongodb.net/?retryWrites=true&w=majority';
 app.set('connectionStrings', url);
 let songsRepository = require("./repositories/songsRepository");

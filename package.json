@@ -3,6 +3,7 @@
   "description": "Tienda de música",
   "version": "1.0.0",
   "dependencies": {
+    "express-fileupload": "^1.4.0",
     "mongodb": "^4.1.4",
     "swig": "^1.4.2"
   }
