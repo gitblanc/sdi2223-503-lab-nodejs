@@ -12,10 +12,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-require("./routes/songs")(app);
+const { MongoClient } = require("mongodb");
+const url = 'mongodb+srv://admin:sdi@eii-sdi-cluster.5o2t719.mongodb.net/?retryWrites=true&w=majority';
+app.set('connectionStrings', url);
 
 let swig = require("swig");
-require("./routes/songs")(app,swig);
+require("./routes/songs")(app,MongoClient);
 require("./routes/authors")(app)
 
 // view engine setup
