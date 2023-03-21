@@ -16,6 +16,7 @@ require("./routes/songs")(app);
 
 let swig = require("swig");
 require("./routes/songs")(app,swig);
+require("./routes/authors")(app)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
