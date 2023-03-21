@@ -15,9 +15,11 @@ var usersRouter = require('./routes/users');
 const { MongoClient } = require("mongodb");
 const url = 'mongodb+srv://admin:sdi@eii-sdi-cluster.5o2t719.mongodb.net/?retryWrites=true&w=majority';
 app.set('connectionStrings', url);
+let songsRepository = require("./repositories/songsRepository");
+songsRepository.init(app, MongoClient);
 
 let swig = require("swig");
-require("./routes/songs")(app,MongoClient);
+require("./routes/songs.js")(app, songsRepository);
 require("./routes/authors")(app)
 
 // view engine setup
