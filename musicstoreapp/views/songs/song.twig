@@ -12,7 +12,9 @@
                 <h2>{{ song.title }}</h2>
                 <p>{{ song.author }}</p>
                 <p>{{ song.kind }}</p>
-                <button type="button" class="btn btn-primary pull-right">{{ song.price }} €</button>
+                <a class="btn btn-primary pull-right" href="/songs/buy/{{ song._id }}">
+                    {{ song.price }} €
+                </a>
             </div>
             <div>
                 <h2>Comentarios</h2>
@@ -24,7 +26,7 @@
             </div>
             <div>
                 <h2>Agregar un comentario:</h2>
-                <form class="form-horizontal" method="post" action="/comments/{{song._id}}"
+                <form class="form-horizontal" method="post" action="/comments/{{ song._id }}"
                       encType="multipart/form-data">
                     <div class="form-group">
                         <label class="control-label col-sm-2" for="text">Nuevo comentario: </label>
