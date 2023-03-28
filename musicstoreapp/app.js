@@ -49,9 +49,13 @@ require("./routes/users.js")(app, usersRepository);
 
 var indexRouter = require('./routes/index');
 
+let commentsRepository = require("./repositories/commentsRepository");
+commentsRepository.init(app, MongoClient);
+
 let swig = require("swig");
-require("./routes/songs.js")(app, songsRepository);
-require("./routes/authors")(app)
+require("./routes/songs.js")(app, songsRepository, commentsRepository);
+require("./routes/comments.js")(app, commentsRepository);
+require("./routes/authors")(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
