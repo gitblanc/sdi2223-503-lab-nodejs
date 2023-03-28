@@ -1,7 +1,8 @@
+const {ObjectId} = require("mongodb");
 module.exports = function (app, commentsRepository) {
     app.post('/comments/:song_id', function (req, res) {
         let comment = {
-            author: req.session.user, text: req.body.text, song_id: req.params.song_id
+            author: req.session.user, text: req.body.text, song_id: ObjectId(req.params.song_id)
         }
         if(req.session.user != null) {
             commentsRepository.insertComment(comment, function (commentId) {

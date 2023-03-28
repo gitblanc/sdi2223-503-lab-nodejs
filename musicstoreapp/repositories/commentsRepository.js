@@ -5,13 +5,14 @@ module.exports = {
         this.mongoClient = mongoClient;
         this.app = app;
     },
-    getComments: async function (filter, options) {
+    getComments: async function (filter) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("musicStore");
             const collectionName = 'comments';
             const commentsCollection = database.collection(collectionName);
-            const comments = await commentsCollection.find(filter, options).toArray();
+            const comments = await commentsCollection.find({"song_id": filter._id}).toArray();
+            console.log(comments);
             return comments;
         } catch (error) {
             throw (error);

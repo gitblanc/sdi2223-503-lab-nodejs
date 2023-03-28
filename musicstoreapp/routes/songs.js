@@ -150,7 +150,7 @@ module.exports = function (app, songsRepository, commentsRepository) {
         let filter = {_id: ObjectId(req.params.id)};
         let options = {};
         songsRepository.findSong(filter, options).then(song => {
-            commentsRepository.getComments(song._id.body, options).then( comments => {//se buscan los comentarios de la canción
+            commentsRepository.getComments(filter).then( comments => {//se buscan los comentarios de la canción
                 res.render("songs/song.twig", {song: song, comments: comments});
             }).catch(error => {
                 res.send("Se ha producido un error al buscar los comentarios de la canción " + error)
