@@ -6,6 +6,7 @@
     "express-fileupload": "^1.4.0",
     "express-session": "^1.17.3",
     "mongodb": "^4.1.4",
+    "nodemon": "^2.0.22",
     "swig": "^1.4.2"
   }
 }

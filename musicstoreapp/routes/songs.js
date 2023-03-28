@@ -141,6 +141,19 @@ module.exports = function (app, songsRepository, commentsRepository) {
         }
     };
 
+    app.get('/songs/delete/:id', function (req, res) {
+        let filter = {_id: ObjectId(req.params.id)};
+        songsRepository.deleteSong(filter, {}).then(result => {
+            if (result === null || result.deletedCount === 0) {
+                res.send("No se ha podido eliminar el registro");
+            } else {
+            }
+            res.redirect("/publications");
+        }).catch(error => {
+            res.send("Se ha producido un error al intentar eliminar la canción: " + error)
+        });
+    })
+
     app.get('/songs/:kind/:id', function (req, res) {
         let response = 'id: ' + req.params.id + '<br>' + 'Tipo de música: ' + req.params.kind;
         res.send(response);
@@ -150,7 +163,7 @@ module.exports = function (app, songsRepository, commentsRepository) {
         let filter = {_id: ObjectId(req.params.id)};
         let options = {};
         songsRepository.findSong(filter, options).then(song => {
-            commentsRepository.getComments(filter).then( comments => {//se buscan los comentarios de la canción
+            commentsRepository.getComments(filter).then(comments => {//se buscan los comentarios de la canción
                 res.render("songs/song.twig", {song: song, comments: comments});
             }).catch(error => {
                 res.send("Se ha producido un error al buscar los comentarios de la canción " + error)
