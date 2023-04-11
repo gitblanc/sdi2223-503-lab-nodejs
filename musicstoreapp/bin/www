@@ -21,9 +21,9 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
-let privateKey = fs.readFileSync('certificates/alice.key', 'utf8');
-let certificate = fs.readFileSync('certificates/alice.crt', 'utf8');
+let path = require("path");
+let privateKey = fs.readFileSync(path.join(__dirname, 'certificates/alice.key'), 'utf8');
+let certificate = fs.readFileSync(path.join(__dirname, 'certificates/alice.crt'), 'utf8');
 let credentials = {key: privateKey, cert: certificate};
 let server = http.createServer(app);
 let httpsServer = https.createServer(credentials, app);
