@@ -89,6 +89,9 @@ commentsRepository.init(app, MongoClient);
 
 let swig = require("swig");
 require("./routes/songs.js")(app, songsRepository, commentsRepository);
+
+require("./routes/api/songsAPIv1.0.js")(app, songsRepository);
+
 require("./routes/comments.js")(app, commentsRepository);
 require("./routes/authors")(app);
 
