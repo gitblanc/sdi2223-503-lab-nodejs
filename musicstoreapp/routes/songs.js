@@ -200,10 +200,10 @@ module.exports = function (app, songsRepository, commentsRepository) {
         }
         let filter = {_id: songId};
         songsRepository.findSong(filter, {}).then(song => {
-            if(song.author === req.session.user){ //si es el autor  error
+            if (song.author === req.session.user) { //si es el autor  error
                 res.send("No puedes comprar una canción que hayas compuesto");
-            }else{ // si ya la compro error
-                isSongBought(song._id, req.session.user,res,null,shop,false);
+            } else { // si ya la compro error
+                isSongBought(song._id, req.session.user, res, null, shop, false);
             }
         }).catch(error => {
             res.send("Se ha producido un error al buscar la canción " + error)
@@ -215,67 +215,58 @@ module.exports = function (app, songsRepository, commentsRepository) {
         res.send(response);
     });
 
-    app.get('/songs/:id', function (req, res) { // let filter = {_id: req.params.id};
+    app.get('/songs/:id', function (req, res) {
         let filter = {_id: ObjectId(req.params.id)};
-        let filterComments = {song_id:ObjectId(req.params.id) };
         let options = {};
+        let user = req.session.user;
+        let songID = ObjectId(req.params.id);
         songsRepository.findSong(filter, options).then(song => {
-            commentsRepository.getComments(filterComments,options).then(comments => {
-                let check = true;
-                if(song.author === req.session.user){ //si es el autor  check = true
-                    check = true;
-                    res.render("songs/song.twig", {song: song, comments:comments, isAuthorOrBought:check});
-                }else{ // si es el autor check = false
-                    isSongBought(song._id, req.session.user,res,song,comments,true);
-                }
-
-            }).catch(error => {
-                res.send("Error en la búsqueda de comentarios " + error)
+            filter = {song_id: songID};
+            canBuy(user, songID, function (buy) {
+                commentsRepository.getComments(filter, options).then(comments => {
+                    let settings = {
+                        url: "https://www.freeforexapi.com/api/live?pairs=EURUSD",
+                        method: "get",
+                        headers: {"token": "ejemplo",}
+                    }
+                    let rest = app.get("rest");
+                    rest(settings, function (error, response, body) {
+                        console.log("cod: " + response.statusCode + " Cuerpo :" + body);
+                        let responseObject = JSON.parse(body);
+                        let rateUSD = responseObject.rates.EURUSD.rate;
+                        // nuevo campo "usd" redondeado a dos decimales
+                        let songValue = rateUSD * song.price;
+                        song.usd = Math.round(songValue * 100) / 100;
+                        res.render("songs/song.twig", {song: song, comments: comments, canBuy: buy});
+                    })
+                }).catch(error => {
+                    res.send("Se ha producido un error al recuperar los comentarios " + error)
+                });
             });
+
         }).catch(error => {
             res.send("Se ha producido un error al buscar la canción " + error)
         });
-    })
+    });
 
-    async function isSongBought(songId, user,res,song,comments,condition) {
-        let filterUser = {user: user};
-        let check = true;
-        songsRepository.getPurchases(filterUser, {}).then(
-            songsPurchased => {
-                for (let i = 0; i < songsPurchased.length; i++) {
-                    if (songsPurchased[i].songId.equals(ObjectId(songId))) {
-                        check = true;
-                        if (condition) {
-                            res.render("songs/song.twig", {
-                                song: song,
-                                comments: comments,
-                                isAuthorOrBought: check
-                            });
-                        } else {
-                            res.send("No puedes volver a comprar la misma canción");
-                        }
-                        return;
-                    }
-                }
-                check = false;
-                if (condition) {
-                    res.render("songs/song.twig", {
-                        song: song,
-                        comments: comments,
-                        isAuthorOrBought: check
-                    });
-                } else {
-                    songsRepository.buySong(comments, function (shopId) {
-                        if (shopId == null) {
-                            res.send("Error al realizar la compra");
-                        } else {
-                            res.redirect("/purchases");
-                        }
-                    })
-                }
-
+    function canBuy(user, songId, callback) {
+        let filter = {_id: songId, author: user};
+        let options = {};
+        songsRepository.getSongs(filter, options).then(songs => {
+            if (songs == null || songs.length > 0) { //if the user is the author
+                callback(false);
+            } else {
+                filter = {songId: songId, user: user};
+                songsRepository.getPurchases(filter, options).then(purchases => {
+                    if (purchases == null || purchases.length > 0)
+                        callback(false);
+                    else
+                        callback(true);
+                }).catch(error => {
+                    callback(false);
+                });
             }
-        );
+        });
     }
 
     app.get('/promo*', function (req, res) {
