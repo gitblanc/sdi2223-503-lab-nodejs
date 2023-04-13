@@ -6,6 +6,9 @@ var logger = require('morgan');
 
 var app = express();
 
+let jwt = require('jsonwebtoken');
+app.set('jwt', jwt);
+
 let expressSession = require('express-session');
 app.use(expressSession({
     secret: 'abcdefg',
@@ -30,7 +33,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 const {MongoClient} = require("mongodb");
-const url = 'mongodb+srv://admin:sdi@eii-sdi-cluster.5o2t719.mongodb.net/?retryWrites=true&w=majority';
+//const url = 'mongodb+srv://admin:sdi@eii-sdi-cluster.5o2t719.mongodb.net/?retryWrites=true&w=majority';
+const url = 'mongodb://localhost:27017';
 app.set('connectionStrings', url);
 
 const userSessionRouter = require('./routes/userSessionRouter');
@@ -75,6 +79,9 @@ const userAuthorRouter = require('./routes/userAuthorRouter');
 app.use("/songs/edit", userAuthorRouter);
 app.use("/songs/delete", userAuthorRouter);
 
+const userTokenRouter = require('./routes/userTokenRouter');
+app.use("/api/v1.0/songs/", userTokenRouter);
+
 let songsRepository = require("./repositories/songsRepository");
 songsRepository.init(app, MongoClient);
 
@@ -90,7 +97,7 @@ commentsRepository.init(app, MongoClient);
 let swig = require("swig");
 require("./routes/songs.js")(app, songsRepository, commentsRepository);
 
-require("./routes/api/songsAPIv1.0.js")(app, songsRepository);
+require("./routes/api/songsAPIv1.0.js")(app, songsRepository, usersRepository);
 
 require("./routes/comments.js")(app, commentsRepository);
 require("./routes/authors")(app);
