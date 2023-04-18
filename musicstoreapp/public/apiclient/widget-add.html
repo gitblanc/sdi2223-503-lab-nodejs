@@ -39,7 +39,10 @@
                 $("#main-container").load("widget-songs.html");
             },
             error: function (error) {
-                $("#main-container").load("widget-login.html");
+                console.log(error);
+                $("#widget-agregar")
+                    .prepend("<div id = 'error-div' class = 'alert alert-danger'>No puedes introducir datos vacíos</div>");
+                //$("#main-container").load("widget-login.html");
             }
         });
     }

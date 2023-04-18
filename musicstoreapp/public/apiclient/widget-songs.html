@@ -71,7 +71,10 @@
                 // eliminar el <tr> de la canción
             },
             error: function (error) {
-                $("#main-container").load("widget-login.html");
+                console.log(error);
+                $("#widget-songs")
+                    .prepend("<div id = 'error-div' class = 'alert alert-danger'>No puedes eliminar una canción que no es tuya</div>");
+                //$("#main-container").load("widget-login.html");
             }
         });
     }
